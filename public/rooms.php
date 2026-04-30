@@ -143,37 +143,49 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </article>
 
-                    <div class="hotel-modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm" id="hotel-modal-<?= (int) $hotel['id'] ?>" data-hotel-modal>
-                        <div class="hotel-modal-panel max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl">
-                            <div class="grid gap-1 bg-slate-900 p-1 sm:grid-cols-3">
-                                <img class="h-72 w-full rounded-tl-[1.7rem] object-cover sm:col-span-2" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>">
-                                <div class="grid gap-1">
-                                    <img class="h-36 w-full rounded-tr-[1.7rem] object-cover" src="<?= e($gallery[1]) ?>" alt="<?= e($hotel['name']) ?> interior">
-                                    <img class="h-36 w-full object-cover" src="<?= e($gallery[2]) ?>" alt="<?= e($hotel['name']) ?> exterior">
+                    <div class="hotel-modal fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-3 backdrop-blur-md sm:p-6" id="hotel-modal-<?= (int) $hotel['id'] ?>" data-hotel-modal>
+                        <div class="hotel-modal-panel relative grid max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-2xl lg:grid-cols-[1.08fr_0.92fr]">
+                            <button class="absolute right-4 top-4 z-10 grid h-11 w-11 place-items-center rounded-full bg-white/95 text-xl font-black text-slate-950 shadow-lg transition hover:bg-slate-950 hover:text-white" type="button" data-hotel-modal-close aria-label="Close hotel preview">&times;</button>
+
+                            <section class="bg-slate-950 p-3">
+                                <img class="h-72 w-full rounded-[1.5rem] object-cover sm:h-[430px]" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>">
+                                <div class="mt-3 grid grid-cols-2 gap-3">
+                                    <img class="h-28 w-full rounded-2xl object-cover sm:h-36" src="<?= e($gallery[1]) ?>" alt="<?= e($hotel['name']) ?> interior">
+                                    <img class="h-28 w-full rounded-2xl object-cover sm:h-36" src="<?= e($gallery[2]) ?>" alt="<?= e($hotel['name']) ?> exterior">
                                 </div>
-                            </div>
-                            <div class="grid gap-6 p-6 lg:grid-cols-[1fr_320px]">
-                                <div>
+                            </section>
+
+                            <section class="overflow-y-auto p-6 sm:p-8">
+                                <div class="flex h-full flex-col">
                                     <div class="flex flex-wrap items-center gap-2">
                                         <span class="rounded-full bg-brand-50 px-3 py-1 text-xs font-black text-brand-600"><?= e($hotel['city']) ?>, <?= e($hotel['country']) ?></span>
                                         <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-700"><?= str_repeat('&#9733;', max(1, min(5, $hotel['stars']))) ?></span>
                                     </div>
-                                    <h3 class="mt-3 text-3xl font-black tracking-tight"><?= e($hotel['name']) ?></h3>
+                                    <h3 class="mt-4 text-4xl font-black tracking-tight text-slate-950"><?= e($hotel['name']) ?></h3>
                                     <p class="mt-4 leading-7 text-slate-600"><?= e($hotel['description']) ?></p>
-                                    <div class="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                                        <p class="text-sm font-black uppercase tracking-widest text-slate-400">Location</p>
-                                        <p class="mt-2 text-lg font-black text-slate-950"><?= e($hotel['city']) ?>, <?= e($hotel['country']) ?></p>
-                                        <a class="mt-4 inline-flex rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-600" href="https://www.google.com/maps/search/?api=1&query=<?= urlencode($hotel['name'] . ' ' . $hotel['city'] . ' ' . $hotel['country']) ?>" target="_blank" rel="noreferrer">Open location</a>
+
+                                    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                                        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                                            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Location</p>
+                                            <p class="mt-2 text-lg font-black text-slate-950"><?= e($hotel['city']) ?></p>
+                                            <p class="text-sm font-bold text-slate-500"><?= e($hotel['country']) ?></p>
+                                        </div>
+                                        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                                            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Available rooms</p>
+                                            <p class="mt-2 text-4xl font-black text-slate-950"><?= count($hotel['rooms']) ?></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-6 rounded-3xl bg-slate-950 p-6 text-white">
+                                        <p class="text-sm font-bold text-slate-300">Starting from</p>
+                                        <p class="mt-1 text-4xl font-black text-brand-100">$<?= number_format((float) min(array_column($hotel['rooms'], 'price')), 2) ?></p>
+                                        <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+                                            <a class="inline-flex flex-1 justify-center rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-brand-100" href="https://www.google.com/maps/search/?api=1&query=<?= urlencode($hotel['name'] . ' ' . $hotel['city'] . ' ' . $hotel['country']) ?>" target="_blank" rel="noreferrer">Open location</a>
+                                            <button class="inline-flex flex-1 justify-center rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-500" type="button" data-hotel-modal-close>See rooms below</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="rounded-3xl bg-slate-950 p-6 text-white">
-                                    <p class="text-sm font-bold text-slate-300">Available rooms</p>
-                                    <p class="mt-2 text-4xl font-black"><?= count($hotel['rooms']) ?></p>
-                                    <p class="mt-4 text-sm text-slate-300">Starting from</p>
-                                    <p class="mt-1 text-3xl font-black text-brand-100">$<?= number_format((float) min(array_column($hotel['rooms'], 'price')), 2) ?></p>
-                                    <button class="mt-6 w-full rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-brand-100" type="button" data-hotel-modal-close>Close preview</button>
-                                </div>
-                            </div>
+                            </section>
                         </div>
                     </div>
                 <?php endforeach; ?>
