@@ -33,6 +33,22 @@ php -S localhost:8000 -t public
 
 5. Open `http://localhost:8000`.
 
+## XAMPP Apache on Port 8080
+
+If Apache is configured on port `8080`, place the project in:
+
+```text
+C:\xampp\htdocs\hotel-management
+```
+
+Then open:
+
+```text
+http://localhost:8080/hotel-management/public
+```
+
+MySQL still uses port `3306` by default. Start MySQL from the XAMPP control panel before opening the site.
+
 ## API
 
 API documentation is available in `docs/API.md`.

@@ -16,10 +16,9 @@ require_once __DIR__ . '/includes/header.php';
                 <p class="muted"><?= e($room['city']) ?> - Room <?= e($room['room_number']) ?></p>
                 <p>Type: <strong><?= e($room['type']) ?></strong></p>
                 <p class="price">$<?= number_format((float) $room['price'], 2) ?> / night</p>
-                <a class="btn" href="/reserve.php?room_id=<?= (int) $room['id'] ?>">Reserve</a>
+                <a class="btn" href="<?= e(url('/reserve.php?room_id=' . (int) $room['id'])) ?>">Reserve</a>
             </article>
         <?php endforeach; ?>
     </div>
 </main>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-

@@ -65,7 +65,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td><?= e($hotel['city']) ?></td>
                                 <td><?= e($hotel['address']) ?></td>
                                 <td>
-                                    <a class="btn secondary" href="/admin/hotels.php?edit=<?= (int) $hotel['id'] ?>">Edit</a>
+                                    <a class="btn secondary" href="<?= e(url('/admin/hotels.php?edit=' . (int) $hotel['id'])) ?>">Edit</a>
                                     <form class="inline-form" method="post">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= (int) $hotel['id'] ?>">
@@ -81,4 +81,3 @@ require_once __DIR__ . '/../includes/header.php';
     </section>
 </main>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-

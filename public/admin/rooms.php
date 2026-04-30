@@ -88,7 +88,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td>$<?= number_format((float) $room['price'], 2) ?></td>
                                 <td><span class="status <?= e($room['status']) ?>"><?= e($room['status']) ?></span></td>
                                 <td>
-                                    <a class="btn secondary" href="/admin/rooms.php?edit=<?= (int) $room['id'] ?>">Edit</a>
+                                    <a class="btn secondary" href="<?= e(url('/admin/rooms.php?edit=' . (int) $room['id'])) ?>">Edit</a>
                                     <form class="inline-form" method="post">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= (int) $room['id'] ?>">
@@ -104,4 +104,3 @@ require_once __DIR__ . '/../includes/header.php';
     </section>
 </main>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-

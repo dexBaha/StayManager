@@ -35,9 +35,8 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
     </section>
 </main>
-<script src="/assets/js/charts.js"></script>
+<script src="<?= e(url('/assets/js/charts.js')) ?>"></script>
 <script>
 drawReservationChart('reservationChart', <?= json_encode($labels) ?>, <?= json_encode($values) ?>);
 </script>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-

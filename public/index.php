@@ -8,9 +8,9 @@ require_once __DIR__ . '/includes/header.php';
         <h1>StayManager</h1>
         <p>Book rooms, manage reservations, and administer hotels from one PHP OOP application.</p>
         <div class="actions">
-            <a class="btn" href="/rooms.php">View rooms</a>
+            <a class="btn" href="<?= e(url('/rooms.php')) ?>">View rooms</a>
             <?php if (!Auth::check()): ?>
-                <a class="btn secondary" href="/register.php">Create account</a>
+                <a class="btn secondary" href="<?= e(url('/register.php')) ?>">Create account</a>
             <?php endif; ?>
         </div>
     </div>
@@ -32,4 +32,3 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </main>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-

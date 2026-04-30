@@ -75,7 +75,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td><?= e($user['email']) ?></td>
                                 <td><?= e($user['role']) ?></td>
                                 <td>
-                                    <a class="btn secondary" href="/admin/users.php?edit=<?= (int) $user['id'] ?>">Edit</a>
+                                    <a class="btn secondary" href="<?= e(url('/admin/users.php?edit=' . (int) $user['id'])) ?>">Edit</a>
                                     <?php if ($user['role'] !== 'admin'): ?>
                                         <form class="inline-form" method="post">
                                             <input type="hidden" name="action" value="delete">
@@ -93,4 +93,3 @@ require_once __DIR__ . '/../includes/header.php';
     </section>
 </main>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-
