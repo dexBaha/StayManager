@@ -13,6 +13,7 @@ class Dashboard
             'hotels' => (int) $this->db->query('SELECT COUNT(*) FROM hotels')->fetchColumn(),
             'rooms' => (int) $this->db->query('SELECT COUNT(*) FROM rooms')->fetchColumn(),
             'reservations' => (int) $this->db->query('SELECT COUNT(*) FROM reservations')->fetchColumn(),
+            'support' => (int) $this->db->query('SELECT COUNT(*) FROM support_tickets WHERE status = "open"')->fetchColumn(),
         ];
     }
 
@@ -27,4 +28,3 @@ class Dashboard
         return (float) $this->db->query('SELECT COALESCE(SUM(total_price), 0) FROM reservations WHERE status = "confirmed"')->fetchColumn();
     }
 }
-

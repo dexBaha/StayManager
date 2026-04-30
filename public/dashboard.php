@@ -3,6 +3,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 Auth::requireLogin();
 
 $reservationModel = new Reservation($db);
+$ticketModel = new SupportTicket($db);
 $user = Auth::user();
 
 if (isPost()) {
@@ -16,6 +17,11 @@ if (isPost()) {
     if ($action === 'update_dates') {
         $updated = $reservationModel->updateDates((int) $_POST['id'], $user['id'], $_POST['check_in'], $_POST['check_out']);
         Session::flash('success', $updated ? 'Reservation updated.' : 'Check-out date must be after check-in date.');
+    }
+
+    if ($action === 'support_question') {
+        $created = $ticketModel->create($user['id'], trim($_POST['subject']), trim($_POST['message']));
+        Session::flash('success', $created ? 'Your question was sent to customer service.' : 'Could not send your question.');
     }
 
     redirect('/dashboard.php');
@@ -41,6 +47,7 @@ function dashboardRoomPhoto(string $type): string
 }
 
 $reservations = $reservationModel->forUser($user['id']);
+$tickets = $ticketModel->forUser($user['id']);
 $totalSpent = array_sum(array_map(fn ($reservation) => (float) $reservation['total_price'], $reservations));
 $pendingCount = count(array_filter($reservations, fn ($reservation) => $reservation['status'] === 'pending'));
 $confirmedCount = count(array_filter($reservations, fn ($reservation) => $reservation['status'] === 'confirmed'));
@@ -149,6 +156,59 @@ require_once __DIR__ . '/includes/header.php';
                 </article>
             <?php endforeach; ?>
         </div>
+    </section>
+
+    <section class="mt-12 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <article class="animate-card-in rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft">
+            <p class="text-sm font-black uppercase tracking-widest text-brand-600">Customer service</p>
+            <h2 class="mt-2 text-3xl font-black tracking-tight">Ask a question</h2>
+            <p class="mt-3 text-slate-600">Send a message to the hotel team. The admin response will appear here in your dashboard.</p>
+            <form class="mt-6 grid gap-4" method="post">
+                <input type="hidden" name="action" value="support_question">
+                <label class="text-sm font-black text-slate-600">Subject
+                    <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="subject" placeholder="Example: Airport transfer" required>
+                </label>
+                <label class="text-sm font-black text-slate-600">Question
+                    <textarea class="min-h-32 rounded-2xl border border-slate-200 px-4 py-3" name="message" placeholder="Write your question here..." required></textarea>
+                </label>
+                <button class="rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" type="submit">Send question</button>
+            </form>
+        </article>
+
+        <article class="animate-card-in rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 120ms">
+            <div class="flex items-end justify-between gap-4">
+                <div>
+                    <p class="text-sm font-black uppercase tracking-widest text-brand-600">Messages</p>
+                    <h2 class="mt-2 text-3xl font-black tracking-tight">Admin replies</h2>
+                </div>
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600"><?= count($tickets) ?> question<?= count($tickets) === 1 ? '' : 's' ?></span>
+            </div>
+
+            <div class="mt-6 grid gap-4">
+                <?php if (!$tickets): ?>
+                    <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center">
+                        <p class="font-black text-slate-900">No questions yet</p>
+                        <p class="mt-2 text-sm text-slate-500">Ask customer service anything about your stay.</p>
+                    </div>
+                <?php endif; ?>
+
+                <?php foreach ($tickets as $ticket): ?>
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h3 class="font-black text-slate-950"><?= e($ticket['subject']) ?></h3>
+                            <span class="rounded-full <?= $ticket['status'] === 'answered' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' ?> px-3 py-1 text-xs font-black"><?= e($ticket['status']) ?></span>
+                        </div>
+                        <p class="mt-3 text-sm leading-6 text-slate-600"><?= e($ticket['message']) ?></p>
+                        <?php if (!empty($ticket['admin_reply'])): ?>
+                            <div class="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+                                <p class="text-xs font-black uppercase tracking-widest text-brand-600">Admin response</p>
+                                <p class="mt-2 text-sm leading-6 text-slate-700"><?= e($ticket['admin_reply']) ?></p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </article>
     </section>
 </main>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

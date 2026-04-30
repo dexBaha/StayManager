@@ -23,11 +23,12 @@ require_once __DIR__ . '/../includes/header.php';
             </div>
             <p class="max-w-md text-slate-600">Track users, hotels, rooms, reservations, and confirmed revenue from one interface.</p>
         </div>
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 40ms"><p class="text-sm font-black uppercase text-slate-400">Users</p><div class="mt-3 text-4xl font-black"><?= $counts['users'] ?></div></article>
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 100ms"><p class="text-sm font-black uppercase text-slate-400">Hotels</p><div class="mt-3 text-4xl font-black"><?= $counts['hotels'] ?></div></article>
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 160ms"><p class="text-sm font-black uppercase text-slate-400">Rooms</p><div class="mt-3 text-4xl font-black"><?= $counts['rooms'] ?></div></article>
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 220ms"><p class="text-sm font-black uppercase text-slate-400">Reservations</p><div class="mt-3 text-4xl font-black"><?= $counts['reservations'] ?></div></article>
+            <article class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 280ms"><p class="text-sm font-black uppercase text-slate-400">Support</p><div class="mt-3 text-4xl font-black text-amber-600"><?= $counts['support'] ?></div></article>
         </div>
         <div class="mt-6 grid gap-6 xl:grid-cols-[320px_1fr]">
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-slate-900 p-6 text-white shadow-soft">

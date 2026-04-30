@@ -5,6 +5,7 @@ CREATE DATABASE IF NOT EXISTS hotel_management
 USE hotel_management;
 
 DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS support_tickets;
 DROP TABLE IF EXISTS rooms;
 DROP TABLE IF EXISTS hotels;
 DROP TABLE IF EXISTS users;
@@ -52,6 +53,18 @@ CREATE TABLE reservations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_reservations_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_reservations_room FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
+);
+
+CREATE TABLE support_tickets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    admin_reply TEXT NULL,
+    status ENUM('open', 'answered') NOT NULL DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    answered_at TIMESTAMP NULL,
+    CONSTRAINT fk_support_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 INSERT INTO users (name, email, password, role) VALUES
