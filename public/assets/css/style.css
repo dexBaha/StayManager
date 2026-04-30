@@ -194,6 +194,70 @@ th {
     display: inline;
 }
 
+.animate-page-rise {
+    animation: pageRise 0.7s ease both;
+}
+
+.animate-card-in {
+    animation: cardIn 0.65s ease both;
+}
+
+.animate-soft-float {
+    animation: softFloat 5s ease-in-out infinite;
+}
+
+.hotel-card.is-open {
+    border-color: #99f6e4;
+}
+
+.hotel-card.is-open .room-reveal {
+    animation: roomReveal 0.48s ease both;
+    animation-delay: var(--delay, 0ms);
+}
+
+@keyframes pageRise {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(22px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes softFloat {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes roomReveal {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media (max-width: 900px) {
     .admin-layout {
         grid-template-columns: 1fr;

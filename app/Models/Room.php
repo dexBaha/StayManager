@@ -8,7 +8,7 @@ class Room
 
     public function all(): array
     {
-        $sql = 'SELECT rooms.*, hotels.name AS hotel_name
+        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url, hotels.description AS hotel_description
                 FROM rooms
                 JOIN hotels ON hotels.id = rooms.hotel_id
                 ORDER BY rooms.id DESC';
@@ -18,11 +18,11 @@ class Room
 
     public function available(): array
     {
-        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city
+        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url, hotels.description AS hotel_description
                 FROM rooms
                 JOIN hotels ON hotels.id = rooms.hotel_id
                 WHERE rooms.status = "available"
-                ORDER BY rooms.id DESC';
+                ORDER BY hotels.country ASC, hotels.name ASC, rooms.price ASC';
 
         return $this->db->query($sql)->fetchAll();
     }
@@ -30,7 +30,7 @@ class Room
     public function find(int $id): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT rooms.*, hotels.name AS hotel_name, hotels.city
+            'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url
              FROM rooms
              JOIN hotels ON hotels.id = rooms.hotel_id
              WHERE rooms.id = ?'
@@ -63,4 +63,3 @@ class Room
         return $stmt->execute([$id]);
     }
 }
-

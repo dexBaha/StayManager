@@ -11,14 +11,16 @@ if (isset($_GET['edit'])) {
 
 if (isPost()) {
     $action = $_POST['action'] ?? '';
+    $stars = max(1, min(5, (int) ($_POST['stars'] ?? 3)));
+    $photoUrl = trim($_POST['photo_url'] ?? '');
 
     if ($action === 'create') {
-        $hotelModel->create($_POST['name'], $_POST['city'], $_POST['address'], $_POST['description']);
+        $hotelModel->create($_POST['name'], $_POST['city'], $_POST['country'], $stars, $photoUrl, $_POST['address'], $_POST['description']);
         Session::flash('success', 'Hotel created.');
     }
 
     if ($action === 'update') {
-        $hotelModel->update((int) $_POST['id'], $_POST['name'], $_POST['city'], $_POST['address'], $_POST['description']);
+        $hotelModel->update((int) $_POST['id'], $_POST['name'], $_POST['city'], $_POST['country'], $stars, $photoUrl, $_POST['address'], $_POST['description']);
         Session::flash('success', 'Hotel updated.');
     }
 
@@ -47,7 +49,10 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="form-row">
                     <label>Name <input type="text" name="name" value="<?= e($editHotel['name'] ?? '') ?>" required></label>
                     <label>City <input type="text" name="city" value="<?= e($editHotel['city'] ?? '') ?>" required></label>
+                    <label>Country <input type="text" name="country" value="<?= e($editHotel['country'] ?? '') ?>" required></label>
+                    <label>Stars <input type="number" name="stars" min="1" max="5" value="<?= e((string) ($editHotel['stars'] ?? 4)) ?>" required></label>
                 </div>
+                <label>Photo URL <input type="url" name="photo_url" value="<?= e($editHotel['photo_url'] ?? '') ?>" placeholder="https://example.com/hotel.jpg"></label>
                 <label>Address <input type="text" name="address" value="<?= e($editHotel['address'] ?? '') ?>" required></label>
                 <label>Description <textarea name="description" required><?= e($editHotel['description'] ?? '') ?></textarea></label>
                 <button class="btn" type="submit"><?= $editHotel ? 'Update hotel' : 'Create hotel' ?></button>
@@ -57,12 +62,13 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>Hotel list</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Name</th><th>City</th><th>Address</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>Name</th><th>Location</th><th>Stars</th><th>Address</th><th>Actions</th></tr></thead>
                     <tbody>
                         <?php foreach ($hotels as $hotel): ?>
                             <tr>
                                 <td><?= e($hotel['name']) ?></td>
-                                <td><?= e($hotel['city']) ?></td>
+                                <td><?= e($hotel['city']) ?>, <?= e($hotel['country']) ?></td>
+                                <td><?= str_repeat('★', (int) ($hotel['stars'] ?? 0)) ?></td>
                                 <td><?= e($hotel['address']) ?></td>
                                 <td>
                                     <a class="btn secondary" href="<?= e(url('/admin/hotels.php?edit=' . (int) $hotel['id'])) ?>">Edit</a>

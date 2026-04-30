@@ -26,12 +26,12 @@ $pageTitle = 'My account';
 require_once __DIR__ . '/includes/header.php';
 ?>
 <main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-    <div class="mb-8">
+    <div class="animate-page-rise mb-8">
         <p class="text-sm font-black uppercase tracking-widest text-brand-600">User dashboard</p>
         <h1 class="mt-2 text-4xl font-black tracking-tight">Welcome, <?= e($user['name']) ?></h1>
     </div>
     <?php if ($message = Session::flash('success')): ?><div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700"><?= e($message) ?></div><?php endif; ?>
-    <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+    <section class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
         <h2 class="text-2xl font-black">My reservations</h2>
         <div class="mt-5 overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">

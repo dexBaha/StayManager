@@ -18,16 +18,40 @@ class Hotel
         return $stmt->fetch() ?: null;
     }
 
-    public function create(string $name, string $city, string $address, string $description): bool
+    public function create(
+        string $name,
+        string $city,
+        string $country,
+        int $stars,
+        string $photoUrl,
+        string $address,
+        string $description
+    ): bool
     {
-        $stmt = $this->db->prepare('INSERT INTO hotels (name, city, address, description) VALUES (?, ?, ?, ?)');
-        return $stmt->execute([$name, $city, $address, $description]);
+        $stmt = $this->db->prepare(
+            'INSERT INTO hotels (name, city, country, stars, photo_url, address, description)
+             VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        return $stmt->execute([$name, $city, $country, $stars, $photoUrl, $address, $description]);
     }
 
-    public function update(int $id, string $name, string $city, string $address, string $description): bool
+    public function update(
+        int $id,
+        string $name,
+        string $city,
+        string $country,
+        int $stars,
+        string $photoUrl,
+        string $address,
+        string $description
+    ): bool
     {
-        $stmt = $this->db->prepare('UPDATE hotels SET name = ?, city = ?, address = ?, description = ? WHERE id = ?');
-        return $stmt->execute([$name, $city, $address, $description, $id]);
+        $stmt = $this->db->prepare(
+            'UPDATE hotels SET name = ?, city = ?, country = ?, stars = ?, photo_url = ?, address = ?, description = ? WHERE id = ?'
+        );
+
+        return $stmt->execute([$name, $city, $country, $stars, $photoUrl, $address, $description, $id]);
     }
 
     public function delete(int $id): bool
@@ -36,4 +60,3 @@ class Hotel
         return $stmt->execute([$id]);
     }
 }
-
