@@ -13,24 +13,30 @@ $values = array_map('intval', array_column($statuses, 'total'));
 $pageTitle = 'Admin dashboard';
 require_once __DIR__ . '/../includes/header.php';
 ?>
-<main class="container admin-layout">
+<main class="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8">
     <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
     <section>
-        <h1>Admin dashboard</h1>
-        <div class="grid stats">
-            <article class="card"><p class="muted">Users</p><div class="stat-number"><?= $counts['users'] ?></div></article>
-            <article class="card"><p class="muted">Hotels</p><div class="stat-number"><?= $counts['hotels'] ?></div></article>
-            <article class="card"><p class="muted">Rooms</p><div class="stat-number"><?= $counts['rooms'] ?></div></article>
-            <article class="card"><p class="muted">Reservations</p><div class="stat-number"><?= $counts['reservations'] ?></div></article>
+        <div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+                <p class="text-sm font-black uppercase tracking-widest text-brand-600">Administration</p>
+                <h1 class="mt-2 text-4xl font-black tracking-tight">Admin dashboard</h1>
+            </div>
+            <p class="max-w-md text-slate-600">Track users, hotels, rooms, reservations, and confirmed revenue from one interface.</p>
         </div>
-        <div class="grid rooms" style="margin-top: 18px;">
-            <article class="card">
-                <h2>Revenue</h2>
-                <p class="price">$<?= number_format($revenue, 2) ?></p>
-                <p class="muted">Confirmed reservations only.</p>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"><p class="text-sm font-black uppercase text-slate-400">Users</p><div class="mt-3 text-4xl font-black"><?= $counts['users'] ?></div></article>
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"><p class="text-sm font-black uppercase text-slate-400">Hotels</p><div class="mt-3 text-4xl font-black"><?= $counts['hotels'] ?></div></article>
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"><p class="text-sm font-black uppercase text-slate-400">Rooms</p><div class="mt-3 text-4xl font-black"><?= $counts['rooms'] ?></div></article>
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"><p class="text-sm font-black uppercase text-slate-400">Reservations</p><div class="mt-3 text-4xl font-black"><?= $counts['reservations'] ?></div></article>
+        </div>
+        <div class="mt-6 grid gap-6 xl:grid-cols-[320px_1fr]">
+            <article class="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-white shadow-soft">
+                <p class="text-sm font-black uppercase tracking-widest text-brand-100">Revenue</p>
+                <p class="mt-4 text-4xl font-black">$<?= number_format($revenue, 2) ?></p>
+                <p class="mt-2 text-sm text-slate-300">Confirmed reservations only.</p>
             </article>
-            <article class="card">
-                <canvas id="reservationChart" width="520" height="260"></canvas>
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+                <canvas class="w-full" id="reservationChart" width="680" height="300"></canvas>
             </article>
         </div>
     </section>

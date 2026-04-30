@@ -1,7 +1,8 @@
-<aside class="sidebar">
-    <a href="<?= e(url('/admin/index.php')) ?>" class="<?= basename($_SERVER['SCRIPT_NAME']) === 'index.php' ? 'active' : '' ?>">Dashboard</a>
-    <a href="<?= e(url('/admin/hotels.php')) ?>" class="<?= basename($_SERVER['SCRIPT_NAME']) === 'hotels.php' ? 'active' : '' ?>">Hotels</a>
-    <a href="<?= e(url('/admin/rooms.php')) ?>" class="<?= basename($_SERVER['SCRIPT_NAME']) === 'rooms.php' ? 'active' : '' ?>">Rooms</a>
-    <a href="<?= e(url('/admin/reservations.php')) ?>" class="<?= basename($_SERVER['SCRIPT_NAME']) === 'reservations.php' ? 'active' : '' ?>">Reservations</a>
-    <a href="<?= e(url('/admin/users.php')) ?>" class="<?= basename($_SERVER['SCRIPT_NAME']) === 'users.php' ? 'active' : '' ?>">Users</a>
+<aside class="rounded-2xl border border-slate-200 bg-white p-3 shadow-soft">
+    <p class="px-3 pb-3 text-xs font-black uppercase tracking-widest text-slate-400">Admin menu</p>
+    <a href="<?= e(url('/admin/index.php')) ?>" class="block rounded-xl px-4 py-3 text-sm font-bold transition <?= basename($_SERVER['SCRIPT_NAME']) === 'index.php' ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' ?>">Dashboard</a>
+    <a href="<?= e(url('/admin/hotels.php')) ?>" class="block rounded-xl px-4 py-3 text-sm font-bold transition <?= basename($_SERVER['SCRIPT_NAME']) === 'hotels.php' ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' ?>">Hotels</a>
+    <a href="<?= e(url('/admin/rooms.php')) ?>" class="block rounded-xl px-4 py-3 text-sm font-bold transition <?= basename($_SERVER['SCRIPT_NAME']) === 'rooms.php' ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' ?>">Rooms</a>
+    <a href="<?= e(url('/admin/reservations.php')) ?>" class="block rounded-xl px-4 py-3 text-sm font-bold transition <?= basename($_SERVER['SCRIPT_NAME']) === 'reservations.php' ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' ?>">Reservations</a>
+    <a href="<?= e(url('/admin/users.php')) ?>" class="block rounded-xl px-4 py-3 text-sm font-bold transition <?= basename($_SERVER['SCRIPT_NAME']) === 'users.php' ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' ?>">Users</a>
 </aside>
