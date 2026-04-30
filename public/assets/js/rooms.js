@@ -16,3 +16,48 @@ document.querySelectorAll('[data-hotel-card]').forEach((card) => {
         }
     });
 });
+
+document.querySelectorAll('[data-hotel-modal-open]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const modal = document.getElementById(button.dataset.hotelModalOpen);
+
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex', 'is-visible');
+        document.body.classList.add('overflow-hidden');
+    });
+});
+
+document.querySelectorAll('[data-hotel-modal]').forEach((modal) => {
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex', 'is-visible');
+        document.body.classList.remove('overflow-hidden');
+    };
+
+    modal.querySelectorAll('[data-hotel-modal-close]').forEach((button) => {
+        button.addEventListener('click', closeModal);
+    });
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') {
+        return;
+    }
+
+    document.querySelectorAll('[data-hotel-modal].is-visible').forEach((modal) => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex', 'is-visible');
+    });
+
+    document.body.classList.remove('overflow-hidden');
+});

@@ -215,6 +215,14 @@ th {
     animation-delay: var(--delay, 0ms);
 }
 
+.hotel-modal.is-visible {
+    animation: modalFade 0.22s ease both;
+}
+
+.hotel-modal.is-visible .hotel-modal-panel {
+    animation: modalPanel 0.32s ease both;
+}
+
 @keyframes pageRise {
     from {
         opacity: 0;
@@ -244,6 +252,26 @@ th {
     }
     50% {
         transform: translateY(-8px);
+    }
+}
+
+@keyframes modalFade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalPanel {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
