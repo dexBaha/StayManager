@@ -9,7 +9,6 @@ require_once __DIR__ . '/includes/header.php';
     <div class="relative mx-auto grid min-h-[540px] max-w-7xl items-center px-4 py-20 sm:px-6 lg:px-8">
         <div class="max-w-3xl text-white">
             <h1 class="text-5xl font-black leading-tight tracking-tight sm:text-7xl">StayManager</h1>
-            <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-100">Book rooms, manage reservations, and administer hotels from one polished PHP OOP application with Tailwind interfaces.</p>
             <div class="mt-8 flex flex-wrap gap-3">
             <a class="rounded-full bg-brand-500 px-6 py-3 text-sm font-black text-white shadow-xl shadow-brand-900/30 transition hover:bg-brand-600" href="<?= e(url('/rooms.php')) ?>">View rooms</a>
             <?php if (!Auth::check()): ?>
