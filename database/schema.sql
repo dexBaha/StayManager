@@ -39,6 +39,8 @@ CREATE TABLE rooms (
     price DECIMAL(10, 2) NOT NULL,
     status ENUM('available', 'reserved', 'maintenance') NOT NULL DEFAULT 'available',
     unavailable_until DATE NULL,
+    description TEXT NULL,
+    amenities VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_rooms_hotel FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE
 );
@@ -79,16 +81,16 @@ INSERT INTO hotels (name, city, country, stars, photo_url, address, description)
 ('Atlas Sky Palace', 'Marrakech', 'Morocco', 5, 'https://images.unsplash.com/photo-1590073242678-70ee3fc28f8e?auto=format&fit=crop&w=1200&q=80', 'Medina District, Marrakech', 'A refined stay with rooftop views, spa services, and warm Moroccan design.'),
 ('Paris Lumiere Hotel', 'Paris', 'France', 5, 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=80', 'Rue de Rivoli, Paris', 'An elegant city hotel close to museums, shopping streets, and historic landmarks.');
 
-INSERT INTO rooms (hotel_id, room_number, type, price, status, unavailable_until) VALUES
-(1, '101', 'Single', 85.00, 'available', NULL),
-(1, '205', 'Double', 130.00, 'available', NULL),
-(2, '302', 'Suite', 220.00, 'available', NULL),
-(2, '114', 'Family', 180.00, 'maintenance', DATE_ADD(CURDATE(), INTERVAL 5 DAY)),
-(3, '22', 'Double', 115.00, 'available', NULL),
-(4, 'A12', 'Riad Suite', 260.00, 'available', NULL),
-(4, 'B07', 'Deluxe Double', 175.00, 'available', NULL),
-(5, '701', 'Executive Suite', 310.00, 'available', NULL),
-(5, '412', 'Classic Double', 190.00, 'available', NULL);
+INSERT INTO rooms (hotel_id, room_number, type, price, status, unavailable_until, description, amenities) VALUES
+(1, '101', 'Single', 85.00, 'available', NULL, 'Compact room for one guest with a comfortable bed and practical workspace.', 'WiFi, breakfast included, AC, TV'),
+(1, '205', 'Double', 130.00, 'available', NULL, 'Bright double room for couples or friends with city view and daily cleaning.', 'WiFi, breakfast included, AC, minibar, TV'),
+(2, '302', 'Suite', 220.00, 'available', NULL, 'Spacious suite with lounge area, premium bathroom, and balcony-style view.', 'WiFi, breakfast included, AC, minibar, sea view, room service'),
+(2, '114', 'Family', 180.00, 'maintenance', DATE_ADD(CURDATE(), INTERVAL 5 DAY), 'Large family room with extra beds and a calm layout for longer stays.', 'WiFi, breakfast included, AC, kids beds, TV'),
+(3, '22', 'Double', 115.00, 'available', NULL, 'Warm double room close to the oasis tours with quiet interior design.', 'WiFi, breakfast included, AC, parking'),
+(4, 'A12', 'Riad Suite', 260.00, 'available', NULL, 'Moroccan-style suite with premium decor, seating area, and relaxing atmosphere.', 'WiFi, breakfast included, AC, spa access, room service'),
+(4, 'B07', 'Deluxe Double', 175.00, 'available', NULL, 'Deluxe double room with refined design and comfortable bedding.', 'WiFi, breakfast included, AC, minibar, TV'),
+(5, '701', 'Executive Suite', 310.00, 'available', NULL, 'Executive suite designed for luxury stays with elegant view and lounge space.', 'WiFi, breakfast included, AC, minibar, city view, room service'),
+(5, '412', 'Classic Double', 190.00, 'available', NULL, 'Classic Parisian double room with soft lighting and practical amenities.', 'WiFi, breakfast included, AC, TV, coffee machine');
 
 INSERT INTO reservations (user_id, room_id, check_in, check_out, total_price, status) VALUES
 (2, 1, '2026-05-10', '2026-05-12', 170.00, 'confirmed'),

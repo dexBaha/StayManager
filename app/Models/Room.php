@@ -47,22 +47,44 @@ class Room
         return $stmt->fetch() ?: null;
     }
 
-    public function create(int $hotelId, string $number, string $type, float $price, string $status, ?string $unavailableUntil = null): bool
+    public function create(
+        int $hotelId,
+        string $number,
+        string $type,
+        float $price,
+        string $status,
+        ?string $unavailableUntil = null,
+        string $description = '',
+        string $amenities = ''
+    ): bool
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO rooms (hotel_id, room_number, type, price, status, unavailable_until) VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO rooms (hotel_id, room_number, type, price, status, unavailable_until, description, amenities)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         );
 
-        return $stmt->execute([$hotelId, $number, $type, $price, $status, $unavailableUntil ?: null]);
+        return $stmt->execute([$hotelId, $number, $type, $price, $status, $unavailableUntil ?: null, $description, $amenities]);
     }
 
-    public function update(int $id, int $hotelId, string $number, string $type, float $price, string $status, ?string $unavailableUntil = null): bool
+    public function update(
+        int $id,
+        int $hotelId,
+        string $number,
+        string $type,
+        float $price,
+        string $status,
+        ?string $unavailableUntil = null,
+        string $description = '',
+        string $amenities = ''
+    ): bool
     {
         $stmt = $this->db->prepare(
-            'UPDATE rooms SET hotel_id = ?, room_number = ?, type = ?, price = ?, status = ?, unavailable_until = ? WHERE id = ?'
+            'UPDATE rooms
+             SET hotel_id = ?, room_number = ?, type = ?, price = ?, status = ?, unavailable_until = ?, description = ?, amenities = ?
+             WHERE id = ?'
         );
 
-        return $stmt->execute([$hotelId, $number, $type, $price, $status, $unavailableUntil ?: null, $id]);
+        return $stmt->execute([$hotelId, $number, $type, $price, $status, $unavailableUntil ?: null, $description, $amenities, $id]);
     }
 
     public function delete(int $id): bool

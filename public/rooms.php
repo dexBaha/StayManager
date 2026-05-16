@@ -196,6 +196,15 @@ require_once __DIR__ . '/includes/header.php';
                                                 <?php $availability = roomAvailability($room); ?>
                                                 <span class="rounded-full <?= $availability['status'] === 'available' ? 'bg-emerald-50 text-emerald-700' : ($availability['status'] === 'reserved' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700') ?> px-3 py-1 text-xs font-black"><?= e($availability['label']) ?></span>
                                             </div>
+                                            <p class="mt-3 text-sm leading-6 text-slate-600"><?= e($room['description'] ?: 'Comfortable room prepared for a relaxing hotel stay.') ?></p>
+                                            <?php $amenities = array_filter(array_map('trim', explode(',', $room['amenities'] ?? ''))); ?>
+                                            <?php if ($amenities): ?>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <?php foreach ($amenities as $amenity): ?>
+                                                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600"><?= e($amenity) ?></span>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
                                             <p class="mt-4 text-3xl font-black text-slate-950">$<?= number_format((float) $room['price'], 2) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
                                             <p class="mt-3 rounded-2xl <?= $availability['can_book'] ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' ?> px-4 py-3 text-sm font-bold"><?= $availability['message'] ?></p>
                                             <?php if ($availability['can_book']): ?>
