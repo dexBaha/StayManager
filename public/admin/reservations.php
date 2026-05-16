@@ -8,8 +8,19 @@ if (isPost()) {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'status') {
-        $reservationModel->updateStatus((int) $_POST['id'], $_POST['status']);
-        Session::flash('success', 'Reservation status updated.');
+        $reservationId = (int) $_POST['id'];
+        $status = $_POST['status'];
+        $reservationModel->updateStatus($reservationId, $status);
+
+        if ($status === 'confirmed') {
+            $reservation = $reservationModel->findDetailed($reservationId);
+            if ($reservation) {
+                (new InvoiceService())->generate($reservation);
+            }
+            Session::flash('success', 'Reservation confirmed. Invoice is now available for the user.');
+        } else {
+            Session::flash('success', 'Reservation status updated.');
+        }
     }
 
     if ($action === 'delete') {
@@ -69,4 +80,3 @@ require_once __DIR__ . '/../includes/header.php';
     </section>
 </main>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-

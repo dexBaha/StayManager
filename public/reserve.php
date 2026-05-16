@@ -53,10 +53,8 @@ if (isPost()) {
     $reservationId = $reservationModel->createAndReturnId(Auth::user()['id'], (int) $room['id'], $_POST['check_in'], $_POST['check_out']);
 
     if ($reservationId) {
-        $reservation = $reservationModel->findDetailed($reservationId);
-        $invoiceUrl = (new InvoiceService())->generate($reservation);
-        Session::flash('success', 'Reservation created successfully. Invoice generated.');
-        redirect($invoiceUrl);
+        Session::flash('success', 'Reservation created successfully. Your invoice will be available after admin confirmation.');
+        redirect('/dashboard.php');
     }
 
     Session::flash('success', 'This room is not available or the dates are invalid.');

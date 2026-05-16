@@ -46,6 +46,11 @@ function dashboardRoomPhoto(string $type): string
     return 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80';
 }
 
+function freeCancellationDeadline(string $checkIn): string
+{
+    return (new DateTimeImmutable($checkIn))->modify('-2 days')->format('Y-m-d');
+}
+
 $reservations = $reservationModel->forUser($user['id']);
 $tickets = $ticketModel->forUser($user['id']);
 $totalSpent = array_sum(array_map(fn ($reservation) => (float) $reservation['total_price'], $reservations));
@@ -136,6 +141,23 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
 
                         <p class="mt-5 text-3xl font-black text-brand-600">$<?= number_format((float) $reservation['total_price'], 2) ?></p>
+
+                        <?php if ($reservation['status'] === 'confirmed'): ?>
+                            <div class="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
+                                <p class="text-sm font-black text-emerald-800">Free cancellation</p>
+                                <p class="mt-1 text-sm leading-6 text-emerald-700">
+                                    You can cancel anytime before <?= e(freeCancellationDeadline($reservation['check_in'])) ?> and get a full refund.
+                                </p>
+                                <a class="mt-4 inline-flex w-full justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-700" href="<?= e(url('/invoice.php?reservation_id=' . (int) $reservation['id'])) ?>" target="_blank">
+                                    Download invoice
+                                </a>
+                            </div>
+                        <?php else: ?>
+                            <div class="mt-5 rounded-3xl border border-amber-200 bg-amber-50 p-4">
+                                <p class="text-sm font-black text-amber-800">Invoice pending</p>
+                                <p class="mt-1 text-sm leading-6 text-amber-700">The invoice button will appear after admin confirmation.</p>
+                            </div>
+                        <?php endif; ?>
 
                         <form class="mt-6 grid gap-3 rounded-3xl border border-slate-200 p-4" method="post">
                             <input type="hidden" name="action" value="update_dates">

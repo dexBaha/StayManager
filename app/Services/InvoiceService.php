@@ -21,35 +21,45 @@ class InvoiceService
     private function buildPdf(array $reservation): string
     {
         $nights = max(1, (new DateTime($reservation['check_in']))->diff(new DateTime($reservation['check_out']))->days);
+        $deadline = (new DateTimeImmutable($reservation['check_in']))->modify('-2 days')->format('Y-m-d');
         $lines = [
-            'StayManager Invoice',
-            'Invoice #: ' . (int) $reservation['id'],
-            'Date: ' . date('Y-m-d'),
+            'STAYMANAGER',
+            'HOTEL RESERVATION INVOICE',
+            'Invoice Number: INV-' . str_pad((string) (int) $reservation['id'], 5, '0', STR_PAD_LEFT),
+            'Issue Date: ' . date('Y-m-d'),
+            '------------------------------------------------------------',
             '',
-            'Customer: ' . $reservation['user_name'],
+            'CUSTOMER',
+            'Name: ' . $reservation['user_name'],
             'Email: ' . $reservation['user_email'],
             '',
+            'BOOKING DETAILS',
             'Hotel: ' . $reservation['hotel_name'],
             'Location: ' . $reservation['city'] . ', ' . $reservation['country'],
             'Room: ' . $reservation['room_number'] . ' - ' . $reservation['type'],
-            '',
             'Check-in: ' . $reservation['check_in'],
             'Check-out: ' . $reservation['check_out'],
             'Nights: ' . $nights,
-            'Price per night: $' . number_format((float) $reservation['price'], 2),
-            'Total: $' . number_format((float) $reservation['total_price'], 2),
-            '',
             'Status: ' . ucfirst($reservation['status']),
+            '',
+            'PAYMENT SUMMARY',
+            'Price per Night: $' . number_format((float) $reservation['price'], 2),
+            'Total Amount: $' . number_format((float) $reservation['total_price'], 2),
+            '------------------------------------------------------------',
+            '',
+            'FREE CANCELLATION POLICY',
+            'You can cancel anytime before ' . $deadline . ' and get a full refund.',
+            'After this deadline, cancellation may be reviewed by hotel policy.',
             '',
             'Thank you for choosing StayManager.',
         ];
 
         $content = "BT\n/F1 18 Tf\n72 760 Td\n";
         foreach ($lines as $index => $line) {
-            $fontSize = $index === 0 ? 18 : 12;
+            $fontSize = in_array($line, ['STAYMANAGER', 'HOTEL RESERVATION INVOICE'], true) ? 18 : 11;
             $content .= '/F1 ' . $fontSize . " Tf\n";
             $content .= '(' . $this->escapePdfText($line) . ") Tj\n";
-            $content .= "0 -" . ($index === 0 ? 30 : 20) . " Td\n";
+            $content .= "0 -" . ($line === '' ? 12 : 18) . " Td\n";
         }
         $content .= "ET";
 
