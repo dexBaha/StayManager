@@ -50,8 +50,16 @@ function reserveRoomGallery(string $type): array
 }
 
 if (isPost()) {
-    $created = $reservationModel->create(Auth::user()['id'], (int) $room['id'], $_POST['check_in'], $_POST['check_out']);
-    Session::flash('success', $created ? 'Reservation created successfully.' : 'This room is not available or the dates are invalid.');
+    $reservationId = $reservationModel->createAndReturnId(Auth::user()['id'], (int) $room['id'], $_POST['check_in'], $_POST['check_out']);
+
+    if ($reservationId) {
+        $reservation = $reservationModel->findDetailed($reservationId);
+        $invoiceUrl = (new InvoiceService())->generate($reservation);
+        Session::flash('success', 'Reservation created successfully. Invoice generated.');
+        redirect($invoiceUrl);
+    }
+
+    Session::flash('success', 'This room is not available or the dates are invalid.');
     redirect('/dashboard.php');
 }
 

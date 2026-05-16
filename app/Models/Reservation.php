@@ -40,16 +40,38 @@ class Reservation
         return $stmt->fetch() ?: null;
     }
 
+    public function findDetailed(int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT reservations.*, users.name AS user_name, users.email AS user_email,
+                    rooms.room_number, rooms.type, rooms.price,
+                    hotels.name AS hotel_name, hotels.city, hotels.country
+             FROM reservations
+             JOIN users ON users.id = reservations.user_id
+             JOIN rooms ON rooms.id = reservations.room_id
+             JOIN hotels ON hotels.id = rooms.hotel_id
+             WHERE reservations.id = ?'
+        );
+        $stmt->execute([$id]);
+
+        return $stmt->fetch() ?: null;
+    }
+
     public function create(int $userId, int $roomId, string $checkIn, string $checkOut): bool
     {
+        return $this->createAndReturnId($userId, $roomId, $checkIn, $checkOut) !== null;
+    }
+
+    public function createAndReturnId(int $userId, int $roomId, string $checkIn, string $checkOut): ?int
+    {
         if (!$this->validDateRange($checkIn, $checkOut)) {
-            return false;
+            return null;
         }
 
         $room = $this->getRoom($roomId);
 
         if (!$room || !$this->roomCanBeReserved($roomId, $room)) {
-            return false;
+            return null;
         }
 
         $nights = max(1, (new DateTime($checkIn))->diff(new DateTime($checkOut))->days);
@@ -60,7 +82,11 @@ class Reservation
              VALUES (?, ?, ?, ?, ?, "pending")'
         );
 
-        return $stmt->execute([$userId, $roomId, $checkIn, $checkOut, $total]);
+        if (!$stmt->execute([$userId, $roomId, $checkIn, $checkOut, $total])) {
+            return null;
+        }
+
+        return (int) $this->db->lastInsertId();
     }
 
     public function updateStatus(int $id, string $status): bool
