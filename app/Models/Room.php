@@ -8,9 +8,12 @@ class Room
 
     public function all(): array
     {
-        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url, hotels.description AS hotel_description
+        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url, hotels.description AS hotel_description,
+                       MAX(CASE WHEN reservations.status IN ("pending", "confirmed") AND reservations.check_out >= CURDATE() THEN reservations.check_out END) AS reserved_until
                 FROM rooms
                 JOIN hotels ON hotels.id = rooms.hotel_id
+                LEFT JOIN reservations ON reservations.room_id = rooms.id
+                GROUP BY rooms.id
                 ORDER BY rooms.id DESC';
 
         return $this->db->query($sql)->fetchAll();
@@ -18,10 +21,12 @@ class Room
 
     public function available(): array
     {
-        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url, hotels.description AS hotel_description
+        $sql = 'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url, hotels.description AS hotel_description,
+                       MAX(CASE WHEN reservations.status IN ("pending", "confirmed") AND reservations.check_out >= CURDATE() THEN reservations.check_out END) AS reserved_until
                 FROM rooms
                 JOIN hotels ON hotels.id = rooms.hotel_id
-                WHERE rooms.status = "available"
+                LEFT JOIN reservations ON reservations.room_id = rooms.id
+                GROUP BY rooms.id
                 ORDER BY hotels.country ASC, hotels.name ASC, rooms.price ASC';
 
         return $this->db->query($sql)->fetchAll();
@@ -30,31 +35,34 @@ class Room
     public function find(int $id): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url
+            'SELECT rooms.*, hotels.name AS hotel_name, hotels.city, hotels.country, hotels.stars, hotels.photo_url,
+                    MAX(CASE WHEN reservations.status IN ("pending", "confirmed") AND reservations.check_out >= CURDATE() THEN reservations.check_out END) AS reserved_until
              FROM rooms
              JOIN hotels ON hotels.id = rooms.hotel_id
-             WHERE rooms.id = ?'
+             LEFT JOIN reservations ON reservations.room_id = rooms.id
+             WHERE rooms.id = ?
+             GROUP BY rooms.id'
         );
         $stmt->execute([$id]);
         return $stmt->fetch() ?: null;
     }
 
-    public function create(int $hotelId, string $number, string $type, float $price, string $status): bool
+    public function create(int $hotelId, string $number, string $type, float $price, string $status, ?string $unavailableUntil = null): bool
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO rooms (hotel_id, room_number, type, price, status) VALUES (?, ?, ?, ?, ?)'
+            'INSERT INTO rooms (hotel_id, room_number, type, price, status, unavailable_until) VALUES (?, ?, ?, ?, ?, ?)'
         );
 
-        return $stmt->execute([$hotelId, $number, $type, $price, $status]);
+        return $stmt->execute([$hotelId, $number, $type, $price, $status, $unavailableUntil ?: null]);
     }
 
-    public function update(int $id, int $hotelId, string $number, string $type, float $price, string $status): bool
+    public function update(int $id, int $hotelId, string $number, string $type, float $price, string $status, ?string $unavailableUntil = null): bool
     {
         $stmt = $this->db->prepare(
-            'UPDATE rooms SET hotel_id = ?, room_number = ?, type = ?, price = ?, status = ? WHERE id = ?'
+            'UPDATE rooms SET hotel_id = ?, room_number = ?, type = ?, price = ?, status = ?, unavailable_until = ? WHERE id = ?'
         );
 
-        return $stmt->execute([$hotelId, $number, $type, $price, $status, $id]);
+        return $stmt->execute([$hotelId, $number, $type, $price, $status, $unavailableUntil ?: null, $id]);
     }
 
     public function delete(int $id): bool

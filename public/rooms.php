@@ -37,6 +37,67 @@ function roomTypePhoto(string $type): string
     return 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80';
 }
 
+function daysUntil(?string $date): int
+{
+    if (!$date) {
+        return 0;
+    }
+
+    $today = new DateTimeImmutable('today');
+    $target = new DateTimeImmutable($date);
+
+    return max(0, (int) $today->diff($target)->format('%r%a'));
+}
+
+function roomAvailability(array $room): array
+{
+    if (!empty($room['reserved_until'])) {
+        $days = daysUntil($room['reserved_until']);
+
+        return [
+            'status' => 'reserved',
+            'label' => 'Reserved',
+            'message' => $days > 0 ? 'Available after ' . e($room['reserved_until']) . ' (' . $days . ' day' . ($days === 1 ? '' : 's') . ' left)' : 'Available soon',
+            'can_book' => false,
+        ];
+    }
+
+    if (($room['status'] ?? '') === 'maintenance') {
+        $days = daysUntil($room['unavailable_until'] ?? null);
+        $message = !empty($room['unavailable_until'])
+            ? 'Maintenance ends on ' . e($room['unavailable_until']) . ' (' . $days . ' day' . ($days === 1 ? '' : 's') . ' left)'
+            : 'Maintenance in progress. End date not set.';
+
+        return [
+            'status' => 'maintenance',
+            'label' => 'Maintenance',
+            'message' => $message,
+            'can_book' => false,
+        ];
+    }
+
+    if (($room['status'] ?? '') === 'reserved') {
+        $days = daysUntil($room['unavailable_until'] ?? null);
+        $message = !empty($room['unavailable_until'])
+            ? 'Available after ' . e($room['unavailable_until']) . ' (' . $days . ' day' . ($days === 1 ? '' : 's') . ' left)'
+            : 'Reserved. Return date not set.';
+
+        return [
+            'status' => 'reserved',
+            'label' => 'Reserved',
+            'message' => $message,
+            'can_book' => false,
+        ];
+    }
+
+    return [
+        'status' => 'available',
+        'label' => 'Available',
+        'message' => 'Ready to book now',
+        'can_book' => true,
+    ];
+}
+
 foreach ($rooms as $room) {
     $hotelId = (int) $room['hotel_id'];
     $country = $room['country'] ?: 'Other';
@@ -132,10 +193,16 @@ require_once __DIR__ . '/includes/header.php';
                                                     <p class="text-xs font-black uppercase tracking-widest text-brand-600"><?= e($room['type']) ?></p>
                                                     <h4 class="mt-1 text-lg font-black">Room <?= e($room['room_number']) ?></h4>
                                                 </div>
-                                                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Available</span>
+                                                <?php $availability = roomAvailability($room); ?>
+                                                <span class="rounded-full <?= $availability['status'] === 'available' ? 'bg-emerald-50 text-emerald-700' : ($availability['status'] === 'reserved' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700') ?> px-3 py-1 text-xs font-black"><?= e($availability['label']) ?></span>
                                             </div>
                                             <p class="mt-4 text-3xl font-black text-slate-950">$<?= number_format((float) $room['price'], 2) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
-                                            <a class="mt-5 inline-flex w-full justify-center rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" href="<?= e(url('/reserve.php?room_id=' . (int) $room['id'])) ?>">Reserve this room</a>
+                                            <p class="mt-3 rounded-2xl <?= $availability['can_book'] ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' ?> px-4 py-3 text-sm font-bold"><?= $availability['message'] ?></p>
+                                            <?php if ($availability['can_book']): ?>
+                                                <a class="mt-5 inline-flex w-full justify-center rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" href="<?= e(url('/reserve.php?room_id=' . (int) $room['id'])) ?>">Reserve this room</a>
+                                            <?php else: ?>
+                                                <button class="mt-5 w-full cursor-not-allowed rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-500" type="button" disabled>Not available</button>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

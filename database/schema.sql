@@ -38,6 +38,7 @@ CREATE TABLE rooms (
     type VARCHAR(80) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     status ENUM('available', 'reserved', 'maintenance') NOT NULL DEFAULT 'available',
+    unavailable_until DATE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_rooms_hotel FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE
 );
@@ -78,16 +79,16 @@ INSERT INTO hotels (name, city, country, stars, photo_url, address, description)
 ('Atlas Sky Palace', 'Marrakech', 'Morocco', 5, 'https://images.unsplash.com/photo-1590073242678-70ee3fc28f8e?auto=format&fit=crop&w=1200&q=80', 'Medina District, Marrakech', 'A refined stay with rooftop views, spa services, and warm Moroccan design.'),
 ('Paris Lumiere Hotel', 'Paris', 'France', 5, 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=80', 'Rue de Rivoli, Paris', 'An elegant city hotel close to museums, shopping streets, and historic landmarks.');
 
-INSERT INTO rooms (hotel_id, room_number, type, price, status) VALUES
-(1, '101', 'Single', 85.00, 'available'),
-(1, '205', 'Double', 130.00, 'available'),
-(2, '302', 'Suite', 220.00, 'available'),
-(2, '114', 'Family', 180.00, 'maintenance'),
-(3, '22', 'Double', 115.00, 'available'),
-(4, 'A12', 'Riad Suite', 260.00, 'available'),
-(4, 'B07', 'Deluxe Double', 175.00, 'available'),
-(5, '701', 'Executive Suite', 310.00, 'available'),
-(5, '412', 'Classic Double', 190.00, 'available');
+INSERT INTO rooms (hotel_id, room_number, type, price, status, unavailable_until) VALUES
+(1, '101', 'Single', 85.00, 'available', NULL),
+(1, '205', 'Double', 130.00, 'available', NULL),
+(2, '302', 'Suite', 220.00, 'available', NULL),
+(2, '114', 'Family', 180.00, 'maintenance', DATE_ADD(CURDATE(), INTERVAL 5 DAY)),
+(3, '22', 'Double', 115.00, 'available', NULL),
+(4, 'A12', 'Riad Suite', 260.00, 'available', NULL),
+(4, 'B07', 'Deluxe Double', 175.00, 'available', NULL),
+(5, '701', 'Executive Suite', 310.00, 'available', NULL),
+(5, '412', 'Classic Double', 190.00, 'available', NULL);
 
 INSERT INTO reservations (user_id, room_id, check_in, check_out, total_price, status) VALUES
 (2, 1, '2026-05-10', '2026-05-12', 170.00, 'confirmed'),

@@ -14,14 +14,15 @@ if (isPost()) {
     $action = $_POST['action'] ?? '';
     $hotelId = (int) ($_POST['hotel_id'] ?? 0);
     $price = (float) ($_POST['price'] ?? 0);
+    $unavailableUntil = $_POST['unavailable_until'] ?? null;
 
     if ($action === 'create') {
-        $roomModel->create($hotelId, $_POST['room_number'], $_POST['type'], $price, $_POST['status']);
+        $roomModel->create($hotelId, $_POST['room_number'], $_POST['type'], $price, $_POST['status'], $unavailableUntil);
         Session::flash('success', 'Room created.');
     }
 
     if ($action === 'update') {
-        $roomModel->update((int) $_POST['id'], $hotelId, $_POST['room_number'], $_POST['type'], $price, $_POST['status']);
+        $roomModel->update((int) $_POST['id'], $hotelId, $_POST['room_number'], $_POST['type'], $price, $_POST['status'], $unavailableUntil);
         Session::flash('success', 'Room updated.');
     }
 
@@ -70,6 +71,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <?php endforeach; ?>
                         </select>
                     </label>
+                    <label>Unavailable until <input type="date" name="unavailable_until" value="<?= e($editRoom['unavailable_until'] ?? '') ?>"></label>
                 </div>
                 <button class="btn" type="submit"><?= $editRoom ? 'Update room' : 'Create room' ?></button>
             </form>
@@ -78,7 +80,7 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>Room list</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Hotel</th><th>Room</th><th>Type</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>Hotel</th><th>Room</th><th>Type</th><th>Price</th><th>Status</th><th>Unavailable until</th><th>Actions</th></tr></thead>
                     <tbody>
                         <?php foreach ($rooms as $room): ?>
                             <tr>
@@ -87,6 +89,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td><?= e($room['type']) ?></td>
                                 <td>$<?= number_format((float) $room['price'], 2) ?></td>
                                 <td><span class="status <?= e($room['status']) ?>"><?= e($room['status']) ?></span></td>
+                                <td><?= e($room['reserved_until'] ?? $room['unavailable_until'] ?? '-') ?></td>
                                 <td>
                                     <a class="btn secondary" href="<?= e(url('/admin/rooms.php?edit=' . (int) $room['id'])) ?>">Edit</a>
                                     <form class="inline-form" method="post">

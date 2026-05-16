@@ -48,7 +48,7 @@ class Reservation
 
         $room = $this->getRoom($roomId);
 
-        if (!$room) {
+        if (!$room || !$this->roomCanBeReserved($roomId, $room)) {
             return false;
         }
 
@@ -111,6 +111,23 @@ class Reservation
         $stmt = $this->db->prepare('SELECT * FROM rooms WHERE id = ?');
         $stmt->execute([$roomId]);
         return $stmt->fetch() ?: null;
+    }
+
+    private function roomCanBeReserved(int $roomId, array $room): bool
+    {
+        if (($room['status'] ?? '') !== 'available') {
+            return false;
+        }
+
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM reservations
+             WHERE room_id = ?
+             AND status IN ("pending", "confirmed")
+             AND check_out >= CURDATE()'
+        );
+        $stmt->execute([$roomId]);
+
+        return (int) $stmt->fetchColumn() === 0;
     }
 
     private function validDateRange(string $checkIn, string $checkOut): bool
