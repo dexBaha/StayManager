@@ -63,13 +63,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?php $gallery = hotelGallery($hotel['photo_url']); ?>
                     <article class="hotel-card group overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-2xl" data-hotel-card>
                         <div class="relative h-64 overflow-hidden">
-                            <div class="grid h-full grid-cols-3 gap-1 bg-slate-900">
-                                <img class="col-span-2 h-full w-full object-cover transition duration-700 group-hover:scale-105" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>">
-                                <div class="grid gap-1">
-                                    <img class="h-full w-full object-cover transition duration-700 group-hover:scale-105" src="<?= e($gallery[1]) ?>" alt="<?= e($hotel['name']) ?> lobby">
-                                    <img class="h-full w-full object-cover transition duration-700 group-hover:scale-105" src="<?= e($gallery[2]) ?>" alt="<?= e($hotel['name']) ?> view">
-                                </div>
-                            </div>
+                            <img class="h-full w-full object-cover transition duration-700 group-hover:scale-105" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent"></div>
                             <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                                 <div class="mb-3 flex flex-wrap items-center gap-2">
