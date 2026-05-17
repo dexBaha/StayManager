@@ -24,8 +24,8 @@ if ($method === 'POST') {
     $created = $reservationModel->create(
         Auth::user()['id'],
         (int) ($data['room_id'] ?? 0),
-        $data['check_in'] ?? '',
-        $data['check_out'] ?? ''
+        trim($data['check_in'] ?? ''),
+        trim($data['check_out'] ?? '')
     );
 
     jsonResponse(
@@ -45,4 +45,3 @@ if ($method === 'DELETE') {
 }
 
 jsonResponse(['error' => 'Method not allowed'], 405);
-
