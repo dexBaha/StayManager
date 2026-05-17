@@ -13,12 +13,6 @@ Simple hotel management website built with HTML, CSS, JavaScript, PHP OOP, and P
 - JSON API endpoints for auth, rooms, reservations, and admin stats
 - Git-ready structure with `.gitignore`
 
-## Student Responsibilities
-
-- Student 1: `User` class and `Auth` system
-- Student 2: `Hotel` and `Room` classes
-- Student 3: `Reservation` system
-- Student 4: Admin dashboard and JavaScript stats chart
 
 ## Setup
 
@@ -60,14 +54,3 @@ Examples:
 - `GET /api/reservations.php`
 - `GET /api/stats.php`
 
-## Default Accounts
-
-Admin:
-
-- Email: `admin@hotel.com`
-- Password: `admin123`
-
-User:
-
-- Email: `user@hotel.com`
-- Password: `user123`
