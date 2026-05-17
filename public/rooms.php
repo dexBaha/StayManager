@@ -5,99 +5,6 @@ $roomModel = new Room($db);
 $rooms = $roomModel->available();
 $countries = [];
 
-function hotelGallery(string $mainPhoto): array
-{
-    return [
-        $mainPhoto,
-        'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1200&q=80',
-    ];
-}
-
-function roomTypePhoto(string $type): string
-{
-    $type = strtolower($type);
-
-    if (str_contains($type, 'suite') || str_contains($type, 'riad')) {
-        return 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80';
-    }
-
-    if (str_contains($type, 'family')) {
-        return 'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?auto=format&fit=crop&w=900&q=80';
-    }
-
-    if (str_contains($type, 'double') || str_contains($type, 'deluxe')) {
-        return 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80';
-    }
-
-    if (str_contains($type, 'executive')) {
-        return 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=900&q=80';
-    }
-
-    return 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80';
-}
-
-function daysUntil(?string $date): int
-{
-    if (!$date) {
-        return 0;
-    }
-
-    $today = new DateTimeImmutable('today');
-    $target = new DateTimeImmutable($date);
-
-    return max(0, (int) $today->diff($target)->format('%r%a'));
-}
-
-function roomAvailability(array $room): array
-{
-    if (!empty($room['reserved_until'])) {
-        $days = daysUntil($room['reserved_until']);
-
-        return [
-            'status' => 'reserved',
-            'label' => 'Reserved',
-            'message' => $days > 0 ? 'Available after ' . e($room['reserved_until']) . ' (' . $days . ' day' . ($days === 1 ? '' : 's') . ' left)' : 'Available soon',
-            'can_book' => false,
-        ];
-    }
-
-    if (($room['status'] ?? '') === 'maintenance') {
-        $days = daysUntil($room['unavailable_until'] ?? null);
-        $message = !empty($room['unavailable_until'])
-            ? 'Maintenance ends on ' . e($room['unavailable_until']) . ' (' . $days . ' day' . ($days === 1 ? '' : 's') . ' left)'
-            : 'Maintenance in progress. End date not set.';
-
-        return [
-            'status' => 'maintenance',
-            'label' => 'Maintenance',
-            'message' => $message,
-            'can_book' => false,
-        ];
-    }
-
-    if (($room['status'] ?? '') === 'reserved') {
-        $days = daysUntil($room['unavailable_until'] ?? null);
-        $message = !empty($room['unavailable_until'])
-            ? 'Available after ' . e($room['unavailable_until']) . ' (' . $days . ' day' . ($days === 1 ? '' : 's') . ' left)'
-            : 'Reserved. Return date not set.';
-
-        return [
-            'status' => 'reserved',
-            'label' => 'Reserved',
-            'message' => $message,
-            'can_book' => false,
-        ];
-    }
-
-    return [
-        'status' => 'available',
-        'label' => 'Available',
-        'message' => 'Ready to book now',
-        'can_book' => true,
-    ];
-}
-
 foreach ($rooms as $room) {
     $hotelId = (int) $room['hotel_id'];
     $country = $room['country'] ?: 'Other';
@@ -177,7 +84,7 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="flex items-center justify-between gap-4 p-6">
                             <div>
                                 <p class="text-sm font-bold text-slate-500">From</p>
-                                <p class="text-3xl font-black text-brand-600">$<?= number_format((float) min(array_column($hotel['rooms'], 'price')), 2) ?></p>
+                                <p class="text-3xl font-black text-brand-600"><?= money(min(array_column($hotel['rooms'], 'price'))) ?></p>
                             </div>
                             <button class="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-600" type="button" data-hotel-toggle aria-expanded="false" data-toggle-label>Show rooms</button>
                         </div>
@@ -205,8 +112,8 @@ require_once __DIR__ . '/includes/header.php';
                                                     <?php endforeach; ?>
                                                 </div>
                                             <?php endif; ?>
-                                            <p class="mt-4 text-3xl font-black text-slate-950">$<?= number_format((float) $room['price'], 2) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
-                                            <p class="mt-3 rounded-2xl <?= $availability['can_book'] ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' ?> px-4 py-3 text-sm font-bold"><?= $availability['message'] ?></p>
+                                            <p class="mt-4 text-3xl font-black text-slate-950"><?= money($room['price']) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
+                                            <p class="mt-3 rounded-2xl <?= $availability['can_book'] ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' ?> px-4 py-3 text-sm font-bold"><?= e($availability['message']) ?></p>
                                             <?php if ($availability['can_book']): ?>
                                                 <a class="mt-5 inline-flex w-full justify-center rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" href="<?= e(url('/reserve.php?room_id=' . (int) $room['id'])) ?>">Reserve this room</a>
                                             <?php else: ?>
@@ -254,7 +161,7 @@ require_once __DIR__ . '/includes/header.php';
 
                                     <div class="mt-6 rounded-3xl bg-slate-950 p-6 text-white">
                                         <p class="text-sm font-bold text-slate-300">Starting from</p>
-                                        <p class="mt-1 text-4xl font-black text-brand-100">$<?= number_format((float) min(array_column($hotel['rooms'], 'price')), 2) ?></p>
+                                        <p class="mt-1 text-4xl font-black text-brand-100"><?= money(min(array_column($hotel['rooms'], 'price'))) ?></p>
                                         <div class="mt-5 flex flex-col gap-3 sm:flex-row">
                                             <a class="inline-flex flex-1 justify-center rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-brand-100" href="https://www.google.com/maps/search/?api=1&query=<?= urlencode($hotel['name'] . ' ' . $hotel['city'] . ' ' . $hotel['country']) ?>" target="_blank" rel="noreferrer">Open location</a>
                                             <button class="inline-flex flex-1 justify-center rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-500" type="button" data-hotel-modal-close>See rooms below</button>

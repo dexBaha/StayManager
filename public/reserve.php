@@ -10,45 +10,6 @@ if (!$room) {
     redirect('/rooms.php');
 }
 
-function reserveRoomGallery(string $type): array
-{
-    $type = strtolower($type);
-
-    if (str_contains($type, 'suite') || str_contains($type, 'riad') || str_contains($type, 'executive')) {
-        return [
-            'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
-        ];
-    }
-
-    if (str_contains($type, 'family')) {
-        return [
-            'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1560448075-bb485b067938?auto=format&fit=crop&w=1200&q=80',
-        ];
-    }
-
-    if (str_contains($type, 'double') || str_contains($type, 'deluxe')) {
-        return [
-            'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
-        ];
-    }
-
-    return [
-        'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1590490359683-658d3d23f972?auto=format&fit=crop&w=1200&q=80',
-    ];
-}
-
 if (isPost()) {
     $reservationId = $reservationModel->createAndReturnId(Auth::user()['id'], (int) $room['id'], $_POST['check_in'], $_POST['check_out']);
 
@@ -61,7 +22,7 @@ if (isPost()) {
     redirect('/dashboard.php');
 }
 
-$gallery = reserveRoomGallery($room['type']);
+$gallery = roomGallery($room['type']);
 $amenities = array_filter(array_map('trim', explode(',', $room['amenities'] ?? '')));
 
 $pageTitle = 'Reserve room';
@@ -97,34 +58,23 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             <?php endif; ?>
 
-            <p class="mt-6 text-4xl font-black text-brand-600">$<?= number_format((float) $room['price'], 2) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
+            <p class="mt-6 text-4xl font-black text-brand-600"><?= money($room['price']) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
 
-            <form class="mt-8 grid gap-5 rounded-3xl border border-slate-200 p-5" method="post">
+            <form class="mt-8 grid gap-5 rounded-3xl border border-slate-200 p-5" method="post" data-stay-form>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <label class="text-sm font-black text-slate-600">Check-in
-                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="date" name="check_in" required>
+                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="date" name="check_in" required data-check-in>
                     </label>
                     <label class="text-sm font-black text-slate-600">Check-out
-                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="date" name="check_out" required>
+                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="date" name="check_out" required data-check-out>
                     </label>
                 </div>
+                <p class="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-black text-slate-600" data-night-summary>Choose dates to see the stay length.</p>
                 <button class="rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" type="submit">Confirm reservation</button>
                 <a class="text-center text-sm font-black text-slate-500 transition hover:text-brand-600" href="<?= e(url('/rooms.php')) ?>">Back to rooms</a>
             </form>
         </aside>
     </section>
 </main>
-<script>
-document.querySelectorAll('[data-room-photo]').forEach((button) => {
-    button.addEventListener('click', () => {
-        document.getElementById('mainRoomPhoto').src = button.dataset.roomPhoto;
-        document.querySelectorAll('.room-photo-thumb').forEach((thumb) => {
-            thumb.classList.remove('ring-brand-600');
-            thumb.classList.add('ring-transparent');
-        });
-        button.classList.add('ring-brand-600');
-        button.classList.remove('ring-transparent');
-    });
-});
-</script>
+<script src="<?= e(url('/assets/js/reserve.js')) ?>"></script>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

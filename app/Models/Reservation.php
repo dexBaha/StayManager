@@ -2,17 +2,21 @@
 
 class Reservation
 {
+    private const PAYMENT_JOIN = 'LEFT JOIN payments ON payments.reservation_id = reservations.id';
+
     public function __construct(private PDO $db)
     {
     }
 
     public function all(): array
     {
-        $sql = 'SELECT reservations.*, users.name AS user_name, rooms.room_number, hotels.name AS hotel_name
+        $sql = 'SELECT reservations.*, users.name AS user_name, rooms.room_number, hotels.name AS hotel_name,
+                       payments.status AS payment_status
                 FROM reservations
                 JOIN users ON users.id = reservations.user_id
                 JOIN rooms ON rooms.id = reservations.room_id
                 JOIN hotels ON hotels.id = rooms.hotel_id
+                ' . self::PAYMENT_JOIN . '
                 ORDER BY reservations.id DESC';
 
         return $this->db->query($sql)->fetchAll();
@@ -21,10 +25,12 @@ class Reservation
     public function forUser(int $userId): array
     {
         $stmt = $this->db->prepare(
-            'SELECT reservations.*, rooms.room_number, rooms.type, hotels.name AS hotel_name
+            'SELECT reservations.*, rooms.room_number, rooms.type, hotels.name AS hotel_name,
+                    payments.status AS payment_status, payments.method AS payment_method, payments.paid_at
              FROM reservations
              JOIN rooms ON rooms.id = reservations.room_id
              JOIN hotels ON hotels.id = rooms.hotel_id
+             ' . self::PAYMENT_JOIN . '
              WHERE reservations.user_id = ?
              ORDER BY reservations.id DESC'
         );
@@ -45,11 +51,13 @@ class Reservation
         $stmt = $this->db->prepare(
             'SELECT reservations.*, users.name AS user_name, users.email AS user_email,
                     rooms.room_number, rooms.type, rooms.price,
+                    payments.status AS payment_status, payments.method AS payment_method, payments.card_last4, payments.paid_at,
                     hotels.name AS hotel_name, hotels.city, hotels.country
              FROM reservations
              JOIN users ON users.id = reservations.user_id
              JOIN rooms ON rooms.id = reservations.room_id
              JOIN hotels ON hotels.id = rooms.hotel_id
+             ' . self::PAYMENT_JOIN . '
              WHERE reservations.id = ?'
         );
         $stmt->execute([$id]);
@@ -64,7 +72,7 @@ class Reservation
 
     public function createAndReturnId(int $userId, int $roomId, string $checkIn, string $checkOut): ?int
     {
-        if (!$this->validDateRange($checkIn, $checkOut)) {
+        if (!isValidStayRange($checkIn, $checkOut)) {
             return null;
         }
 
@@ -74,7 +82,7 @@ class Reservation
             return null;
         }
 
-        $nights = max(1, (new DateTime($checkIn))->diff(new DateTime($checkOut))->days);
+        $nights = nightsBetween($checkIn, $checkOut);
         $total = $nights * (float) $room['price'];
 
         $stmt = $this->db->prepare(
@@ -93,29 +101,6 @@ class Reservation
     {
         $stmt = $this->db->prepare('UPDATE reservations SET status = ? WHERE id = ?');
         return $stmt->execute([$status, $id]);
-    }
-
-    public function updateDates(int $id, int $userId, string $checkIn, string $checkOut): bool
-    {
-        if (!$this->validDateRange($checkIn, $checkOut)) {
-            return false;
-        }
-
-        $reservation = $this->find($id);
-
-        if (!$reservation || (int) $reservation['user_id'] !== $userId) {
-            return false;
-        }
-
-        $room = $this->getRoom((int) $reservation['room_id']);
-        $nights = max(1, (new DateTime($checkIn))->diff(new DateTime($checkOut))->days);
-        $total = $nights * (float) $room['price'];
-
-        $stmt = $this->db->prepare(
-            'UPDATE reservations SET check_in = ?, check_out = ?, total_price = ?, status = "pending" WHERE id = ?'
-        );
-
-        return $stmt->execute([$checkIn, $checkOut, $total, $id]);
     }
 
     public function delete(int $id, ?int $userId = null): bool
@@ -154,10 +139,5 @@ class Reservation
         $stmt->execute([$roomId]);
 
         return (int) $stmt->fetchColumn() === 0;
-    }
-
-    private function validDateRange(string $checkIn, string $checkOut): bool
-    {
-        return new DateTimeImmutable($checkOut) > new DateTimeImmutable($checkIn);
     }
 }

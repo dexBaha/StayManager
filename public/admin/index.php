@@ -33,7 +33,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="mt-6 grid gap-6 xl:grid-cols-[320px_1fr]">
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-slate-900 p-6 text-white shadow-soft">
                 <p class="text-sm font-black uppercase tracking-widest text-brand-100">Revenue</p>
-                <p class="mt-4 text-4xl font-black">$<?= number_format($revenue, 2) ?></p>
+                <p class="mt-4 text-4xl font-black"><?= money($revenue) ?></p>
                 <p class="mt-2 text-sm text-slate-300">Confirmed reservations only.</p>
             </article>
             <article class="animate-card-in rounded-3xl border border-slate-200 bg-white p-6 shadow-soft" style="animation-delay: 120ms">

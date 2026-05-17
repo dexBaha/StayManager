@@ -91,7 +91,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td><?= e($room['hotel_name']) ?></td>
                                 <td><?= e($room['room_number']) ?></td>
                                 <td><?= e($room['type']) ?></td>
-                                <td>$<?= number_format((float) $room['price'], 2) ?></td>
+                                <td><?= money($room['price']) ?></td>
                                 <td><span class="status <?= e($room['status']) ?>"><?= e($room['status']) ?></span></td>
                                 <td><?= e($room['amenities'] ?? '-') ?></td>
                                 <td><?= e($room['reserved_until'] ?? $room['unavailable_until'] ?? '-') ?></td>

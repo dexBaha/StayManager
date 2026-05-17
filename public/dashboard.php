@@ -14,41 +14,12 @@ if (isPost()) {
         Session::flash('success', 'Reservation cancelled.');
     }
 
-    if ($action === 'update_dates') {
-        $updated = $reservationModel->updateDates((int) $_POST['id'], $user['id'], $_POST['check_in'], $_POST['check_out']);
-        Session::flash('success', $updated ? 'Reservation updated.' : 'Check-out date must be after check-in date.');
-    }
-
     if ($action === 'support_question') {
         $created = $ticketModel->create($user['id'], trim($_POST['subject']), trim($_POST['message']));
         Session::flash('success', $created ? 'Your question was sent to customer service.' : 'Could not send your question.');
     }
 
     redirect('/dashboard.php');
-}
-
-function dashboardRoomPhoto(string $type): string
-{
-    $type = strtolower($type);
-
-    if (str_contains($type, 'suite') || str_contains($type, 'riad')) {
-        return 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80';
-    }
-
-    if (str_contains($type, 'family')) {
-        return 'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?auto=format&fit=crop&w=900&q=80';
-    }
-
-    if (str_contains($type, 'double') || str_contains($type, 'deluxe')) {
-        return 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80';
-    }
-
-    return 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80';
-}
-
-function freeCancellationDeadline(string $checkIn): string
-{
-    return (new DateTimeImmutable($checkIn))->modify('-2 days')->format('Y-m-d');
 }
 
 $reservations = $reservationModel->forUser($user['id']);
@@ -67,14 +38,14 @@ require_once __DIR__ . '/includes/header.php';
             <div>
                 <p class="text-sm font-black uppercase tracking-widest text-brand-100">My stay dashboard</p>
                 <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-6xl">Welcome, <?= e($user['name']) ?></h1>
-                <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-300">Track your hotel stays, update dates, and manage every reservation from one animated travel board.</p>
+                <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-300">Track your hotel stays, download invoices, and manage every reservation from one animated travel board.</p>
                 <a class="mt-8 inline-flex rounded-full bg-white px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-brand-100" href="<?= e(url('/rooms.php')) ?>">Explore more hotels</a>
             </div>
             <div class="animate-soft-float rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
                 <p class="text-sm font-bold text-slate-300">Reservations</p>
                 <p class="mt-2 text-6xl font-black"><?= count($reservations) ?></p>
                 <p class="mt-4 text-sm text-slate-300">Total value</p>
-                <p class="mt-1 text-3xl font-black text-brand-100">$<?= number_format($totalSpent, 2) ?></p>
+                <p class="mt-1 text-3xl font-black text-brand-100"><?= money($totalSpent) ?></p>
             </div>
         </div>
     </section>
@@ -104,7 +75,7 @@ require_once __DIR__ . '/includes/header.php';
                 <p class="text-sm font-black uppercase tracking-widest text-brand-600">Reservations</p>
                 <h2 class="mt-2 text-3xl font-black tracking-tight">Your booking cards</h2>
             </div>
-            <p class="max-w-md text-sm font-bold text-slate-500">Edit dates directly from each card or cancel a stay you no longer need.</p>
+            <p class="max-w-md text-sm font-bold text-slate-500">Review each stay, download invoices, or cancel a reservation you no longer need.</p>
         </div>
 
         <?php if (!$reservations): ?>
@@ -118,7 +89,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="grid gap-6 lg:grid-cols-2">
             <?php foreach ($reservations as $index => $reservation): ?>
                 <article class="animate-card-in overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-2xl" style="animation-delay: <?= $index * 80 ?>ms">
-                    <img class="h-52 w-full object-cover" src="<?= e(dashboardRoomPhoto($reservation['type'])) ?>" alt="<?= e($reservation['type']) ?> room">
+                    <img class="h-52 w-full object-cover" src="<?= e(roomTypePhoto($reservation['type'])) ?>" alt="<?= e($reservation['type']) ?> room">
                     <div class="p-6">
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div>
@@ -140,7 +111,7 @@ require_once __DIR__ . '/includes/header.php';
                             </div>
                         </div>
 
-                        <p class="mt-5 text-3xl font-black text-brand-600">$<?= number_format((float) $reservation['total_price'], 2) ?></p>
+                        <p class="mt-5 text-3xl font-black text-brand-600"><?= money($reservation['total_price']) ?></p>
 
                         <?php if ($reservation['status'] === 'confirmed'): ?>
                             <div class="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
@@ -148,9 +119,16 @@ require_once __DIR__ . '/includes/header.php';
                                 <p class="mt-1 text-sm leading-6 text-emerald-700">
                                     You can cancel anytime before <?= e(freeCancellationDeadline($reservation['check_in'])) ?> and get a full refund.
                                 </p>
-                                <a class="mt-4 inline-flex w-full justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-700" href="<?= e(url('/invoice.php?reservation_id=' . (int) $reservation['id'])) ?>" target="_blank">
-                                    Download invoice
-                                </a>
+                                <?php if (($reservation['payment_status'] ?? '') === 'paid'): ?>
+                                    <p class="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-black text-emerald-700">Paid by <?= e($reservation['payment_method'] ?? 'card') ?></p>
+                                    <a class="mt-3 inline-flex w-full justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-700" href="<?= e(url('/invoice.php?reservation_id=' . (int) $reservation['id'])) ?>" target="_blank">
+                                        Download invoice
+                                    </a>
+                                <?php else: ?>
+                                    <a class="mt-4 inline-flex w-full justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-600" href="<?= e(url('/payment.php?reservation_id=' . (int) $reservation['id'])) ?>">
+                                        Pay now
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         <?php else: ?>
                             <div class="mt-5 rounded-3xl border border-amber-200 bg-amber-50 p-4">
@@ -158,16 +136,6 @@ require_once __DIR__ . '/includes/header.php';
                                 <p class="mt-1 text-sm leading-6 text-amber-700">The invoice button will appear after admin confirmation.</p>
                             </div>
                         <?php endif; ?>
-
-                        <form class="mt-6 grid gap-3 rounded-3xl border border-slate-200 p-4" method="post">
-                            <input type="hidden" name="action" value="update_dates">
-                            <input type="hidden" name="id" value="<?= (int) $reservation['id'] ?>">
-                            <div class="grid gap-3 sm:grid-cols-2">
-                                <label class="text-sm font-black text-slate-600">New check-in <input class="rounded-2xl border border-slate-200 px-3 py-2 text-sm" type="date" name="check_in" value="<?= e($reservation['check_in']) ?>" required></label>
-                                <label class="text-sm font-black text-slate-600">New check-out <input class="rounded-2xl border border-slate-200 px-3 py-2 text-sm" type="date" name="check_out" value="<?= e($reservation['check_out']) ?>" required></label>
-                            </div>
-                            <button class="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-600" type="submit">Update dates</button>
-                        </form>
 
                         <form class="mt-3" method="post">
                             <input type="hidden" name="action" value="delete">

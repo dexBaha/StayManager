@@ -19,6 +19,10 @@ if ($reservation['status'] !== 'confirmed') {
     redirect('/dashboard.php');
 }
 
+if (($reservation['payment_status'] ?? '') !== 'paid') {
+    Session::flash('success', 'Please complete payment before downloading the invoice.');
+    redirect('/dashboard.php');
+}
+
 $invoiceUrl = (new InvoiceService())->generate($reservation);
 redirect($invoiceUrl);
-

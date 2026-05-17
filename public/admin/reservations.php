@@ -13,11 +13,7 @@ if (isPost()) {
         $reservationModel->updateStatus($reservationId, $status);
 
         if ($status === 'confirmed') {
-            $reservation = $reservationModel->findDetailed($reservationId);
-            if ($reservation) {
-                (new InvoiceService())->generate($reservation);
-            }
-            Session::flash('success', 'Reservation confirmed. Invoice is now available for the user.');
+            Session::flash('success', 'Reservation confirmed. The user can now complete payment.');
         } else {
             Session::flash('success', 'Reservation status updated.');
         }
@@ -43,7 +39,7 @@ require_once __DIR__ . '/../includes/header.php';
         <section class="card">
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>User</th><th>Hotel</th><th>Room</th><th>Dates</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>User</th><th>Hotel</th><th>Room</th><th>Dates</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody>
                         <?php foreach ($reservations as $reservation): ?>
                             <tr>
@@ -51,7 +47,8 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td><?= e($reservation['hotel_name']) ?></td>
                                 <td><?= e($reservation['room_number']) ?></td>
                                 <td><?= e($reservation['check_in']) ?> to <?= e($reservation['check_out']) ?></td>
-                                <td>$<?= number_format((float) $reservation['total_price'], 2) ?></td>
+                                <td><?= money($reservation['total_price']) ?></td>
+                                <td><span class="status <?= ($reservation['payment_status'] ?? '') === 'paid' ? 'confirmed' : 'pending' ?>"><?= e($reservation['payment_status'] ?? 'unpaid') ?></span></td>
                                 <td>
                                     <form class="form" method="post">
                                         <input type="hidden" name="action" value="status">

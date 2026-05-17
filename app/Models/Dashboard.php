@@ -8,12 +8,21 @@ class Dashboard
 
     public function counts(): array
     {
+        $counts = $this->db->query(
+            'SELECT
+                (SELECT COUNT(*) FROM users) AS users,
+                (SELECT COUNT(*) FROM hotels) AS hotels,
+                (SELECT COUNT(*) FROM rooms) AS rooms,
+                (SELECT COUNT(*) FROM reservations) AS reservations,
+                (SELECT COUNT(*) FROM support_tickets WHERE status = "open") AS support'
+        )->fetch();
+
         return [
-            'users' => (int) $this->db->query('SELECT COUNT(*) FROM users')->fetchColumn(),
-            'hotels' => (int) $this->db->query('SELECT COUNT(*) FROM hotels')->fetchColumn(),
-            'rooms' => (int) $this->db->query('SELECT COUNT(*) FROM rooms')->fetchColumn(),
-            'reservations' => (int) $this->db->query('SELECT COUNT(*) FROM reservations')->fetchColumn(),
-            'support' => (int) $this->db->query('SELECT COUNT(*) FROM support_tickets WHERE status = "open"')->fetchColumn(),
+            'users' => (int) $counts['users'],
+            'hotels' => (int) $counts['hotels'],
+            'rooms' => (int) $counts['rooms'],
+            'reservations' => (int) $counts['reservations'],
+            'support' => (int) $counts['support'],
         ];
     }
 
