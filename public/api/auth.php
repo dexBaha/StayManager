@@ -9,7 +9,7 @@ $data = requestData();
 $action = $_GET['action'] ?? $data['action'] ?? '';
 
 if ($method === 'POST' && $action === 'login') {
-    $loggedIn = $auth->login($data['email'] ?? '', $data['password'] ?? '');
+    $loggedIn = $auth->login(trim($data['email'] ?? ''), $data['password'] ?? '');
     jsonResponse([
         'success' => $loggedIn,
         'user' => $loggedIn ? Auth::user() : null,
@@ -18,7 +18,7 @@ if ($method === 'POST' && $action === 'login') {
 }
 
 if ($method === 'POST' && $action === 'register') {
-    $registered = $auth->register($data['name'] ?? '', $data['email'] ?? '', $data['password'] ?? '');
+    $registered = $auth->register(trim($data['name'] ?? ''), trim($data['email'] ?? ''), $data['password'] ?? '');
     jsonResponse([
         'success' => $registered,
         'message' => $registered ? 'Account created.' : 'Email already exists.',
@@ -31,4 +31,3 @@ if ($method === 'POST' && $action === 'logout') {
 }
 
 jsonResponse(['error' => 'Invalid API action.'], 400);
-
