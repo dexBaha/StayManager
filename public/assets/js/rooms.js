@@ -33,9 +33,20 @@ document.querySelectorAll('[data-hotel-modal-open]').forEach((button) => {
 
 document.querySelectorAll('[data-hotel-modal]').forEach((modal) => {
     const mainPhoto = modal.querySelector('[data-hotel-main-photo]');
+    const galleryToggle = modal.querySelector('[data-hotel-gallery-toggle]');
+    const thumbs = modal.querySelector('[data-hotel-thumbs]');
+
+    if (galleryToggle && thumbs) {
+        galleryToggle.addEventListener('click', () => {
+            const isOpen = thumbs.classList.toggle('is-open');
+            galleryToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+    }
 
     modal.querySelectorAll('[data-hotel-thumb]').forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+
             if (!mainPhoto) {
                 return;
             }

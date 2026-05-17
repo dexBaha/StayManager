@@ -135,8 +135,10 @@ require_once __DIR__ . '/includes/header.php';
 
                             <section class="bg-slate-950 p-3">
                                 <div class="hotel-modal-gallery">
-                                    <img class="hotel-modal-main-photo h-72 w-full rounded-[1.5rem] object-cover sm:h-[430px]" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>" data-hotel-main-photo>
-                                    <div class="hotel-modal-thumbs" aria-label="<?= e($hotel['name']) ?> photo gallery">
+                                    <button class="hotel-modal-main-button" type="button" data-hotel-gallery-toggle aria-expanded="true" aria-label="Show or hide all hotel photos">
+                                        <img class="hotel-modal-main-photo h-72 w-full rounded-[1.5rem] object-cover sm:h-[430px]" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>" data-hotel-main-photo>
+                                    </button>
+                                    <div class="hotel-modal-thumbs is-open" data-hotel-thumbs aria-label="<?= e($hotel['name']) ?> photo gallery">
                                         <?php foreach ($gallery as $photoIndex => $photo): ?>
                                             <button class="hotel-modal-thumb <?= $photoIndex === 0 ? 'is-active' : '' ?>" type="button" data-hotel-thumb="<?= e($photo) ?>" aria-label="Show hotel photo <?= $photoIndex + 1 ?>">
                                                 <img src="<?= e($photo) ?>" alt="<?= e($hotel['name']) ?> photo <?= $photoIndex + 1 ?>">
@@ -184,5 +186,5 @@ require_once __DIR__ . '/includes/header.php';
         </section>
     <?php endforeach; ?>
 </main>
-<script src="<?= e(url('/assets/js/rooms.js')) ?>"></script>
+<script src="<?= e(url('/assets/js/rooms.js?v=' . filemtime(__DIR__ . '/assets/js/rooms.js'))) ?>"></script>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

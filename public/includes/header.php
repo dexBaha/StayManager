@@ -28,7 +28,7 @@ $currentUser = Auth::user();
             }
         };
     </script>
-    <link rel="stylesheet" href="<?= e(url('/assets/css/style.css')) ?>">
+    <link rel="stylesheet" href="<?= e(url('/assets/css/style.css?v=' . filemtime(__DIR__ . '/../assets/css/style.css'))) ?>">
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
 <header class="sticky top-0 z-40 border-b border-white/70 bg-white/90 shadow-sm backdrop-blur">

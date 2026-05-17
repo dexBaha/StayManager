@@ -224,17 +224,43 @@ th {
 }
 
 .hotel-modal-gallery {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: minmax(0, 1fr) 92px;
+    position: relative;
+}
+
+.hotel-modal-main-button {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: block;
+    padding: 0;
+    width: 100%;
 }
 
 .hotel-modal-thumbs {
     display: grid;
     gap: 10px;
-    max-height: 430px;
+    max-height: calc(100% - 24px);
     overflow-y: auto;
-    padding-right: 4px;
+    padding: 8px 6px;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 96px;
+    z-index: 20;
+    border-radius: 18px;
+    background: rgba(2, 6, 23, 0.72);
+    box-shadow: 0 18px 45px rgba(2, 6, 23, 0.32);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(14px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.hotel-modal-thumbs.is-open,
+.hotel-modal-gallery:hover .hotel-modal-thumbs {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
 }
 
 .hotel-modal-thumb {
@@ -242,7 +268,7 @@ th {
     border: 2px solid transparent;
     border-radius: 16px;
     cursor: pointer;
-    height: 92px;
+    height: 82px;
     overflow: hidden;
     padding: 0;
 }
@@ -330,18 +356,7 @@ th {
         grid-template-columns: 1fr;
     }
 
-    .hotel-modal-gallery {
-        grid-template-columns: 1fr;
-    }
-
     .hotel-modal-thumbs {
-        grid-auto-flow: column;
-        grid-auto-columns: 92px;
-        grid-template-columns: none;
-        max-height: none;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding-bottom: 4px;
-        padding-right: 0;
+        width: 82px;
     }
 }
