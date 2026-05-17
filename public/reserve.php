@@ -2,6 +2,11 @@
 require_once __DIR__ . '/../app/bootstrap.php';
 Auth::requireLogin();
 
+if (Auth::isAdmin()) {
+    Session::flash('success', 'Admins can view rooms, but reservations must be created by user accounts.');
+    redirect('/rooms.php');
+}
+
 $roomModel = new Room($db);
 $reservationModel = new Reservation($db);
 $room = $roomModel->find((int) ($_GET['room_id'] ?? 0));

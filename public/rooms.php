@@ -4,6 +4,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 $roomModel = new Room($db);
 $rooms = $roomModel->available();
 $countries = [];
+$isAdminViewer = Auth::isAdmin();
 
 foreach ($rooms as $room) {
     $hotelId = (int) $room['hotel_id'];
@@ -114,8 +115,10 @@ require_once __DIR__ . '/includes/header.php';
                                             <?php endif; ?>
                                             <p class="mt-4 text-3xl font-black text-slate-950"><?= money($room['price']) ?> <span class="text-sm font-bold text-slate-500">/ night</span></p>
                                             <p class="mt-3 rounded-2xl <?= $availability['can_book'] ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' ?> px-4 py-3 text-sm font-bold"><?= e($availability['message']) ?></p>
-                                            <?php if ($availability['can_book']): ?>
+                                            <?php if ($availability['can_book'] && !$isAdminViewer): ?>
                                                 <a class="mt-5 inline-flex w-full justify-center rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" href="<?= e(url('/reserve.php?room_id=' . (int) $room['id'])) ?>">Reserve this room</a>
+                                            <?php elseif ($availability['can_book'] && $isAdminViewer): ?>
+                                                <button class="mt-5 w-full cursor-not-allowed rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-500" type="button" disabled>Admin view only</button>
                                             <?php else: ?>
                                                 <button class="mt-5 w-full cursor-not-allowed rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-500" type="button" disabled>Not available</button>
                                             <?php endif; ?>
