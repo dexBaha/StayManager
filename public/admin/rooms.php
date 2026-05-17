@@ -65,7 +65,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
                 <div class="form-row">
                     <label>Type <input type="text" name="type" value="<?= e($editRoom['type'] ?? '') ?>" required></label>
-                    <label>Price <input type="number" step="0.01" name="price" value="<?= e((string) ($editRoom['price'] ?? '')) ?>" required></label>
+                    <label>Price <input type="number" step="0.01" min="0" name="price" value="<?= e((string) ($editRoom['price'] ?? '')) ?>" required></label>
                     <label>Status
                         <select name="status">
                             <?php foreach (['available', 'reserved', 'maintenance'] as $status): ?>
