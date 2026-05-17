@@ -76,17 +76,17 @@ require_once __DIR__ . '/includes/header.php';
                     </select>
                 </label>
                 <label class="text-sm font-black text-slate-600">Name on card
-                    <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="card_name" required>
+                    <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="card_name" autocomplete="cc-name" required>
                 </label>
                 <label class="text-sm font-black text-slate-600">Card number
-                    <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="card_number" inputmode="numeric" placeholder="4242 4242 4242 4242" required>
+                    <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="card_number" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="4242 4242 4242 4242" required>
                 </label>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <label class="text-sm font-black text-slate-600">Expiry
-                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="expiry" placeholder="12/28" required>
+                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="text" name="expiry" autocomplete="cc-exp" placeholder="12/28" required>
                     </label>
                     <label class="text-sm font-black text-slate-600">CVV
-                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="password" name="cvv" maxlength="4" required>
+                        <input class="rounded-2xl border border-slate-200 px-4 py-3" type="password" name="cvv" inputmode="numeric" autocomplete="cc-csc" maxlength="4" required>
                     </label>
                 </div>
                 <button class="rounded-2xl bg-brand-600 px-5 py-3 text-sm font-black text-white transition hover:bg-brand-900" type="submit">Pay now</button>
