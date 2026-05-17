@@ -134,10 +134,15 @@ require_once __DIR__ . '/includes/header.php';
                             <button class="absolute right-4 top-4 z-10 grid h-11 w-11 place-items-center rounded-full bg-white/95 text-xl font-black text-slate-950 shadow-lg transition hover:bg-slate-950 hover:text-white" type="button" data-hotel-modal-close aria-label="Close hotel preview">&times;</button>
 
                             <section class="bg-slate-950 p-3">
-                                <img class="h-72 w-full rounded-[1.5rem] object-cover sm:h-[430px]" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>">
-                                <div class="mt-3 grid grid-cols-2 gap-3">
-                                    <img class="h-28 w-full rounded-2xl object-cover sm:h-36" src="<?= e($gallery[1]) ?>" alt="<?= e($hotel['name']) ?> interior">
-                                    <img class="h-28 w-full rounded-2xl object-cover sm:h-36" src="<?= e($gallery[2]) ?>" alt="<?= e($hotel['name']) ?> exterior">
+                                <div class="hotel-modal-gallery">
+                                    <img class="hotel-modal-main-photo h-72 w-full rounded-[1.5rem] object-cover sm:h-[430px]" src="<?= e($gallery[0]) ?>" alt="<?= e($hotel['name']) ?>" data-hotel-main-photo>
+                                    <div class="hotel-modal-thumbs" aria-label="<?= e($hotel['name']) ?> photo gallery">
+                                        <?php foreach ($gallery as $photoIndex => $photo): ?>
+                                            <button class="hotel-modal-thumb <?= $photoIndex === 0 ? 'is-active' : '' ?>" type="button" data-hotel-thumb="<?= e($photo) ?>" aria-label="Show hotel photo <?= $photoIndex + 1 ?>">
+                                                <img src="<?= e($photo) ?>" alt="<?= e($hotel['name']) ?> photo <?= $photoIndex + 1 ?>">
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
                             </section>
 

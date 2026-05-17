@@ -223,6 +223,45 @@ th {
     animation: modalPanel 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.hotel-modal-gallery {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) 92px;
+}
+
+.hotel-modal-thumbs {
+    display: grid;
+    gap: 10px;
+    max-height: 430px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.hotel-modal-thumb {
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    height: 92px;
+    overflow: hidden;
+    padding: 0;
+}
+
+.hotel-modal-thumb.is-active {
+    border-color: #2dd4bf;
+}
+
+.hotel-modal-thumb img {
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+    width: 100%;
+}
+
+.hotel-modal-thumb:hover img {
+    transform: scale(1.06);
+}
+
 @keyframes pageRise {
     from {
         opacity: 0;
@@ -289,5 +328,20 @@ th {
 @media (max-width: 900px) {
     .admin-layout {
         grid-template-columns: 1fr;
+    }
+
+    .hotel-modal-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .hotel-modal-thumbs {
+        grid-auto-flow: column;
+        grid-auto-columns: 92px;
+        grid-template-columns: none;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 4px;
+        padding-right: 0;
     }
 }

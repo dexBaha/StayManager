@@ -32,6 +32,22 @@ document.querySelectorAll('[data-hotel-modal-open]').forEach((button) => {
 });
 
 document.querySelectorAll('[data-hotel-modal]').forEach((modal) => {
+    const mainPhoto = modal.querySelector('[data-hotel-main-photo]');
+
+    modal.querySelectorAll('[data-hotel-thumb]').forEach((button) => {
+        button.addEventListener('click', () => {
+            if (!mainPhoto) {
+                return;
+            }
+
+            mainPhoto.src = button.dataset.hotelThumb;
+            modal.querySelectorAll('[data-hotel-thumb]').forEach((thumb) => {
+                thumb.classList.remove('is-active');
+            });
+            button.classList.add('is-active');
+        });
+    });
+
     const closeModal = () => {
         modal.classList.add('hidden');
         modal.classList.remove('flex', 'is-visible');
