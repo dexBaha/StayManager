@@ -45,12 +45,4 @@ MySQL still uses port `3306` by default. Start MySQL from the XAMPP control pane
 
 ## API
 
-API documentation is available in `docs/API.md`.
-
-Examples:
-
-- `GET /api/rooms.php`
-- `POST /api/auth.php?action=login`
-- `GET /api/reservations.php`
-- `GET /api/stats.php`
 
